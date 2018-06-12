@@ -1,0 +1,29 @@
+stages:
+  - test
+  - build
+
+.test: &test
+  stage: test
+  script: |
+    cd D:/GitLabRunner
+    call ExecuteUnityTest.bat
+
+test-Unity:
+  <<: *test
+  variables:
+    PROJECT_NAME : "GroupEnemyAISimulation"
+
+.build: &build
+  stage: build
+  script: |
+    cd D:/GitLabRunner
+    call ExecuteUnityBuild.bat
+  artifacts:
+    paths:
+      - Builds/%BUILD_TARGET%/
+
+build-StandaloneWindows64:
+  <<: *build
+  variables:
+   BUILD_TARGET: StandaloneWindows64
+  when: manual
