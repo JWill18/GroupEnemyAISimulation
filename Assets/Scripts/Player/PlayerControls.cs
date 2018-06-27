@@ -12,6 +12,16 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Player
 		/// </summary>
 		public float MovementSpeed;
 
+		/// <summary>
+		/// The current health of the player.
+		/// </summary>
+		public float Health;
+
+		/// <summary>
+		/// The maximum amount the health can be.
+		/// </summary>
+		public float MaxHealth;
+
 		// Use this for initialization
 		void Start()
 		{
