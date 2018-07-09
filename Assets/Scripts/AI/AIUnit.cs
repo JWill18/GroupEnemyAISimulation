@@ -11,14 +11,22 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 
 		public float Health;
 		public float MaxHealth;
+
 		public float MovementSpeed;
-		public bool SeePlayer;
+
 		public GameObject TargetPlayer;
+
 		public float SightRadius;
 		public float SightAngles;
+		public bool PlayerInSight { get { return DetectPlayerInSightRange(); } }
+		public bool PlayerInContact;
 
-		private bool PlayerInSight { get { return DetectPlayerInSightRange(); } }
-		private bool PlayerInContact;
+		public AIGroup UnitGroup { get { return GetComponentInParent<AIGroup>() ?? null; } }
+
+		public float MinDistanceFromPlayer;
+		public float MaxDistanceFromPlayer;
+
+		public int Index;
 
 		// Use this for initialization
 		void Start()
@@ -31,8 +39,19 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		{
 			if(PlayerInSight || PlayerInContact)
 			{
-				var relativePos = TargetPlayer.transform.position - transform.position;
-				transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(relativePos), Time.deltaTime * 50);
+				// Always look at Player
+				LookAtTargetPlayer();
+
+				// Keep Distance
+				MaintainDistance();
+			}
+			else if (UnitGroup.FoundPlayer)
+			{
+				TargetPlayer = UnitGroup.TargetPlayer;
+
+				LookAtTargetPlayer();
+
+				MaintainDistance();
 			}
 		}
 
@@ -63,6 +82,33 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			return foundPlayer;
 		}
 
+		/// <summary>
+		/// Keeps the AI unit looking at the player as long as it is in range.
+		/// </summary>
+		public void LookAtTargetPlayer()
+		{
+			var relativePos = TargetPlayer.transform.position - transform.position;
+			transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(relativePos), Time.deltaTime * 50);
+		}
+
+		/// <summary>
+		/// Moves the unit away from the target and maintain a safe distance away.
+		/// </summary>
+		private void MaintainDistance()
+		{
+			var distance = Vector3.Distance(transform.position, TargetPlayer.transform.position);
+			var move = MovementSpeed * Time.deltaTime;
+
+			if (distance < MinDistanceFromPlayer)
+				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, -move);
+			else if (distance > MaxDistanceFromPlayer)
+				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, move);
+		}
+
+		/// <summary>
+		/// Checks to see if the player has collided with the object.
+		/// </summary>
+		/// <param name="collision">The object that collides with the unit</param>
 		private void OnCollisionEnter(Collision collision)
 		{
 			if(collision.gameObject.CompareTag("Player"))
@@ -71,6 +117,10 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			}
 		}
 
+		/// <summary>
+		/// Checks to if the player has stopped colliding with the object.
+		/// </summary>
+		/// <param name="collision"></param>
 		private void OnCollisionExit(Collision collision)
 		{
 			if(collision.gameObject.CompareTag("Player"))
