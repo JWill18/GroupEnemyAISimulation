@@ -270,15 +270,12 @@ MonoBehaviour:
   MaxHealth: 50
   MovementSpeed: 5
   BaseDamage: 10
-  InAttackRange: 0
-  BattleState: 0
+  AttackRange: 1
   TargetPlayer: {fileID: 0}
   SightRadius: 15
   SightAngles: 30
-  PlayerInContact: 0
   MinDistanceFromPlayer: 3
-  MaxDistanceFromPlayer: 4
-  Index: 0
+  MaxDistanceFromPlayer: 5
 --- !u!65 &141944487
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -538,15 +535,12 @@ MonoBehaviour:
   MaxHealth: 50
   MovementSpeed: 5
   BaseDamage: 10
-  InAttackRange: 0
-  BattleState: 0
+  AttackRange: 1
   TargetPlayer: {fileID: 0}
   SightRadius: 15
   SightAngles: 30
-  PlayerInContact: 0
   MinDistanceFromPlayer: 3
-  MaxDistanceFromPlayer: 4
-  Index: 0
+  MaxDistanceFromPlayer: 5
 --- !u!65 &296000353
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -655,15 +649,12 @@ MonoBehaviour:
   MaxHealth: 50
   MovementSpeed: 5
   BaseDamage: 15
-  InAttackRange: 0
-  BattleState: 0
+  AttackRange: 1
   TargetPlayer: {fileID: 0}
   SightRadius: 15
   SightAngles: 30
-  PlayerInContact: 0
   MinDistanceFromPlayer: 3
-  MaxDistanceFromPlayer: 4
-  Index: 0
+  MaxDistanceFromPlayer: 5
 --- !u!65 &499085852
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -800,7 +791,8 @@ MonoBehaviour:
   PrimaryBehaviour: 1
   SecondaryBehavior: 0
   HasSeenPlayer: 0
-  AttackIntervalTimer: 3
+  MinAttackIntervalTimer: 3
+  MaxAttackIntervalTimer: 5
 --- !u!4 &1181269566
 Transform:
   m_ObjectHideFlags: 0
@@ -963,15 +955,12 @@ MonoBehaviour:
   MaxHealth: 50
   MovementSpeed: 5
   BaseDamage: 10
-  InAttackRange: 0
-  BattleState: 0
+  AttackRange: 1
   TargetPlayer: {fileID: 0}
   SightRadius: 15
   SightAngles: 30
-  PlayerInContact: 0
   MinDistanceFromPlayer: 3
-  MaxDistanceFromPlayer: 4
-  Index: 0
+  MaxDistanceFromPlayer: 5
 --- !u!65 &1368141906
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1080,15 +1069,12 @@ MonoBehaviour:
   MaxHealth: 50
   MovementSpeed: 5
   BaseDamage: 10
-  InAttackRange: 0
-  BattleState: 0
+  AttackRange: 1
   TargetPlayer: {fileID: 0}
   SightRadius: 15
   SightAngles: 30
-  PlayerInContact: 0
   MinDistanceFromPlayer: 3
-  MaxDistanceFromPlayer: 4
-  Index: 0
+  MaxDistanceFromPlayer: 5
 --- !u!65 &1455844725
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1197,15 +1183,12 @@ MonoBehaviour:
   MaxHealth: 50
   MovementSpeed: 5
   BaseDamage: 10
-  InAttackRange: 0
-  BattleState: 0
+  AttackRange: 1
   TargetPlayer: {fileID: 0}
   SightRadius: 15
   SightAngles: 30
-  PlayerInContact: 0
   MinDistanceFromPlayer: 3
-  MaxDistanceFromPlayer: 4
-  Index: 0
+  MaxDistanceFromPlayer: 5
 --- !u!65 &1843773417
 BoxCollider:
   m_ObjectHideFlags: 0

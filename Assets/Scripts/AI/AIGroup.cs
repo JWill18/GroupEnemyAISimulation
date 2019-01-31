@@ -78,13 +78,30 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		/// </summary>
 		public GameObject TargetPlayer { get { return GetTargetPlayer(); } }
 
-		private bool ReadyToAttack { get { return AttackTimer >= AttackIntervalTimer; } }
+		/// <summary>
+		/// Determines if the unit is ready to attack
+		/// </summary>
+		private bool _readyToAttack { get { return _lastAttackTimer >= MinAttackIntervalTimer; } }
 
-		private bool IsAttacking;
+		/// <summary>
+		/// Determines if a unit is currently attacking.
+		/// </summary>
+		private bool _isAttacking { get { return AliveUnits.Where(unit => unit.BattleState == AIUnitBattleState.Attacking).Count() > 0; } }
 
-		public float AttackIntervalTimer;
+		/// <summary>
+		/// Represent the soonest that the group can attack the player
+		/// </summary>
+		public float MinAttackIntervalTimer;
 
-		private float AttackTimer = 0.0f;
+		/// <summary>
+		/// Represents the maximum amount of time that the group should wait to attack the player
+		/// </summary>
+		public float MaxAttackIntervalTimer;
+
+		/// <summary>
+		/// Represent the time since the last attack
+		/// </summary>
+		private float _lastAttackTimer = 0.0f;
 		#endregion
 
 		#region MonoBehaviour
@@ -217,20 +234,18 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			{
 				RotationMovement();
 
-				if(AttackTimer < AttackIntervalTimer)
+				if (!_isAttacking && _readyToAttack)
 				{
-					AttackTimer += Time.deltaTime;
-				}
-				else
-				{
-					if (!IsAttacking && ReadyToAttack)
+					// Random chance to attack during this time
+					bool attackChance = Random.value > 0.5f;
+					if (attackChance)
 					{
-						IsAttacking = true;
 						var randomNum = Random.Range(0, AliveUnits.Count() - 1);
-
 						AliveUnits[randomNum].SetBattleState(AIUnitBattleState.Attacking);
 					}
 				}
+
+				_lastAttackTimer += Time.deltaTime;
 			}
 		}
 
@@ -240,8 +255,7 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		/// <param name="done">Tells whether a unit is done attacking</param>
 		internal void DoneAttacking(AIUnit unit)
 		{
-			AttackTimer = 0.0f;
-			IsAttacking = false;
+			_lastAttackTimer = 0.0f;
 			unit.SetBattleState(AIUnitBattleState.Normal);
 		}
 		#endregion

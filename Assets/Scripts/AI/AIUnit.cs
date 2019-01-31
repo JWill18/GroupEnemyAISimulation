@@ -32,7 +32,12 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		/// <summary>
 		/// Determines if the unit is within attack range
 		/// </summary>
-		internal bool InAttackRange;
+		internal bool InAttackRange { get { return Vector3.Distance(transform.position, TargetPlayer.transform.position) < AttackRange; } }
+
+		/// <summary>
+		/// The Unit must be within attacking range to be able to hit the player
+		/// </summary>
+		public float AttackRange;
 
 		/// <summary>
 		/// The state of the unit in battle
@@ -214,23 +219,13 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			var distance = Vector3.Distance(transform.position, TargetPlayer.transform.position);
 			var move = MovementSpeed * Time.deltaTime;
 
-			if(distance > 1.0f)
+			if(distance > AttackRange)
 			{
 				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, move);
-
-				if (InAttackRange)
-					InAttackRange = false;
 			}
-			else if (distance < 0.5f)
+			else if (distance < AttackRange / 2)
 			{
 				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, -move);
-
-				if (InAttackRange)
-					InAttackRange = false;
-			}
-			else
-			{
-				InAttackRange = true;
 			}
 		}
 		#endregion
