@@ -41,5 +41,10 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Player
 				transform.Translate(Vector3.right * Input.GetAxis("Horizontal") * MovementSpeed * Time.deltaTime);
 			}
 		}
+
+		public void TakeDamage(float amount)
+		{
+			Health -= amount;
+		}
 	}
 }

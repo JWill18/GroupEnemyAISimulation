@@ -1,6 +1,5 @@
-﻿using GroupEnemyAISimulation.Assets.Scripts.Player;
-using System.Collections;
-using System.Collections.Generic;
+﻿using GroupEnemyAISimulation.Assets.Scripts.Enum;
+using GroupEnemyAISimulation.Assets.Scripts.Player;
 using System.Linq;
 using UnityEngine;
 
@@ -8,26 +7,85 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 {
 	public class AIUnit : MonoBehaviour
 	{
+		#region Properties
 
+		/// <summary>
+		/// The Current health of the unit
+		/// </summary>
 		public float Health;
+
+		/// <summary>
+		/// The maximum amount of health the unit can have.
+		/// </summary>
 		public float MaxHealth;
 
+		/// <summary>
+		/// Speed that the unit can move
+		/// </summary>
 		public float MovementSpeed;
 
+		/// <summary>
+		/// The base amount of damage the unit deals to the player
+		/// </summary>
+		public float BaseDamage;
+
+		/// <summary>
+		/// Determines if the unit is within attack range
+		/// </summary>
+		internal bool InAttackRange;
+
+		/// <summary>
+		/// The state of the unit in battle
+		/// </summary>
+		internal AIUnitBattleState BattleState;
+
+		/// <summary>
+		/// The player that the unit is targeting
+		/// </summary>
 		public GameObject TargetPlayer;
 
+		/// <summary>
+		/// The radius distance to be checking if the unit sees the player
+		/// </summary>
 		public float SightRadius;
-		public float SightAngles;
-		public bool PlayerInSight { get { return DetectPlayerInSightRange(); } }
-		public bool PlayerInContact;
 
+		/// <summary>
+		/// The sight angle needed to spot the player
+		/// </summary>
+		public float SightAngles;
+
+		/// <summary>
+		/// Determines if the unit sees the player
+		/// </summary>
+		internal bool PlayerInSight { get { return DetectPlayerInSightRange(); } }
+
+		/// <summary>
+		/// Determines if the unit is colliding with the player
+		/// </summary>
+		internal bool PlayerInContact;
+
+		/// <summary>
+		/// The Unit Group that the unit belongs to
+		/// </summary>
 		public AIGroup UnitGroup { get { return GetComponentInParent<AIGroup>() ?? null; } }
 
+		/// <summary>
+		/// The minimum amount of distance the unit will try to keep from the player
+		/// </summary>
 		public float MinDistanceFromPlayer;
+
+		/// <summary>
+		/// The maximum amount of distance the unit will try to keep from the player
+		/// </summary>
 		public float MaxDistanceFromPlayer;
 
-		public int Index;
+		/// <summary>
+		/// The Unit Group index of priorities
+		/// </summary>
+		internal int Index;
+		#endregion
 
+		#region MonoBehaviour
 		// Use this for initialization
 		void Start()
 		{
@@ -39,11 +97,26 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		{
 			if(PlayerInSight || PlayerInContact)
 			{
-				// Always look at Player
-				LookAtTargetPlayer();
+				if (BattleState != AIUnitBattleState.Attacking)
+				{
+					// Always look at Player
+					LookAtTargetPlayer();
 
-				// Keep Distance
-				MaintainDistance();
+					MaintainDistance();
+				}
+				else
+				{
+					//Close in on Player
+					MoveTowardsTargetPlayer();
+
+					if (InAttackRange)
+					{
+						// Attack Player
+						AttackTargetPlayer();
+
+						UnitGroup.DoneAttacking(this);
+					}
+				}
 			}
 			else if (UnitGroup.FoundPlayer)
 			{
@@ -55,6 +128,32 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			}
 		}
 
+		/// <summary>
+		/// Checks to see if the player has collided with the object.
+		/// </summary>
+		/// <param name="collision">The object that collides with the unit</param>
+		private void OnCollisionEnter(Collision collision)
+		{
+			if (collision.gameObject.CompareTag("Player"))
+			{
+				PlayerInContact = true;
+			}
+		}
+
+		/// <summary>
+		/// Checks to if the player has stopped colliding with the object.
+		/// </summary>
+		/// <param name="collision"></param>
+		private void OnCollisionExit(Collision collision)
+		{
+			if (collision.gameObject.CompareTag("Player"))
+			{
+				PlayerInContact = false;
+			}
+		}
+		#endregion
+
+		#region Detection
 		/// <summary>
 		/// Detects if the player is in Sight range.
 		/// </summary>
@@ -81,7 +180,9 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 
 			return foundPlayer;
 		}
+		#endregion
 
+		#region Movement
 		/// <summary>
 		/// Keeps the AI unit looking at the player as long as it is in range.
 		/// </summary>
@@ -106,27 +207,71 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		}
 
 		/// <summary>
-		/// Checks to see if the player has collided with the object.
+		/// Moves the unit within striking range of the player
 		/// </summary>
-		/// <param name="collision">The object that collides with the unit</param>
-		private void OnCollisionEnter(Collision collision)
+		private void MoveTowardsTargetPlayer()
 		{
-			if(collision.gameObject.CompareTag("Player"))
+			var distance = Vector3.Distance(transform.position, TargetPlayer.transform.position);
+			var move = MovementSpeed * Time.deltaTime;
+
+			if(distance > 1.0f)
 			{
-				PlayerInContact = true;
+				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, move);
+
+				if (InAttackRange)
+					InAttackRange = false;
 			}
+			else if (distance < 0.5f)
+			{
+				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, -move);
+
+				if (InAttackRange)
+					InAttackRange = false;
+			}
+			else
+			{
+				InAttackRange = true;
+			}
+		}
+		#endregion
+
+		#region Combat
+		private void AttackTargetPlayer()
+		{
+			var playerControl = TargetPlayer.GetComponent<PlayerControls>();
+			playerControl.TakeDamage(BaseDamage);
+		}
+		#endregion
+
+		#region Unit Status
+		/// <summary>
+		/// Determines if the unit is dead
+		/// </summary>
+		/// <returns>If the unit is dead</returns>
+		public bool IsDead()
+		{
+			bool isDead;
+
+			if(Health <= 0)
+			{
+				isDead = true;
+			}
+			else
+			{
+				isDead = false;
+			}
+
+			return isDead;
 		}
 
 		/// <summary>
-		/// Checks to if the player has stopped colliding with the object.
+		/// Sets the battle state of the unit
 		/// </summary>
-		/// <param name="collision"></param>
-		private void OnCollisionExit(Collision collision)
+		/// <param name="unitState">The new state that the unit will be in.</param>
+		public void SetBattleState(AIUnitBattleState unitState)
 		{
-			if(collision.gameObject.CompareTag("Player"))
-			{
-				PlayerInContact = false;
-			}
+			BattleState = unitState;
 		}
+		#endregion
 	}
 }

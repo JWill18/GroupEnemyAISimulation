@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using GroupEnemyAISimulation.Assets.Scripts.Enum;
@@ -13,10 +12,21 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 	/// </summary>
 	public class AIGroup : MonoBehaviour
 	{
+		#region Properties
 		/// <summary>
-		/// List of all units being managed by the group
+		/// List of all units that are still active in the group
 		/// </summary>
-		List<AIUnit> Units { get { return GetComponentsInChildren<AIUnit>().ToList(); } }
+		public List<AIUnit> AliveUnits { get { return GetComponentsInChildren<AIUnit>().Where(unit => !unit.IsDead()).ToList(); } }
+
+		/// <summary>
+		/// List of all units that have been defeated in the group
+		/// </summary>
+		public List<AIUnit> DeadUnits { get { return GetComponentsInChildren<AIUnit>().Where(unit => unit.IsDead()).ToList(); } }
+
+		/// <summary>
+		/// List of all units that are both alive and dead in the group
+		/// </summary>
+		public List<AIUnit> AllUnits { get { return GetComponentsInChildren<AIUnit>().ToList(); } }
 
 		/// <summary>
 		/// The current situation of the group. Used to determine overall options for action.
@@ -68,10 +78,20 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		/// </summary>
 		public GameObject TargetPlayer { get { return GetTargetPlayer(); } }
 
+		private bool ReadyToAttack { get { return AttackTimer >= AttackIntervalTimer; } }
+
+		private bool IsAttacking;
+
+		public float AttackIntervalTimer;
+
+		private float AttackTimer = 0.0f;
+		#endregion
+
+		#region MonoBehaviour
 		// Use this for initialization
 		void Start()
 		{
-
+			CalcUnitIndex();
 		}
 
 		// Update is called once per frame
@@ -85,6 +105,7 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			// React based on the determined behaviors
 			ReactWithCurrentStateAndBehaviors();
 		}
+		#endregion
 
 		#region Determine Behavior
 		/// <summary>
@@ -147,11 +168,11 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			 * Patrol : The group has or has not noticed the player and is searching the perimeter for anything suspicious.
 			 * 
 			 */
-			if (GroupState == AIGroupState.Normal)
+			if(GroupState == AIGroupState.Normal)
 			{
-
+				PrimaryBehaviour = AIGroupBehavior.Passive;
 			}
-			else if (GroupState == AIGroupState.Offensive)
+			if (GroupState == AIGroupState.Offensive)
 			{
 				PrimaryBehaviour = AIGroupBehavior.Aggresive;
 			}
@@ -161,11 +182,11 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			}
 			else if (GroupState == AIGroupState.Protective)
 			{
-
+				PrimaryBehaviour = AIGroupBehavior.Aggresive;
 			}
 			else if (GroupState == AIGroupState.Patrol)
 			{
-
+				PrimaryBehaviour = AIGroupBehavior.Passive;
 			}
 		}
 
@@ -194,9 +215,34 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			 */
 			if (GroupState != AIGroupState.Normal)
 			{
-				CalcUnitIndex();
 				RotationMovement();
+
+				if(AttackTimer < AttackIntervalTimer)
+				{
+					AttackTimer += Time.deltaTime;
+				}
+				else
+				{
+					if (!IsAttacking && ReadyToAttack)
+					{
+						IsAttacking = true;
+						var randomNum = Random.Range(0, AliveUnits.Count() - 1);
+
+						AliveUnits[randomNum].SetBattleState(AIUnitBattleState.Attacking);
+					}
+				}
 			}
+		}
+
+		/// <summary>
+		/// Is called by units to notify that the group is done attacking.
+		/// </summary>
+		/// <param name="done">Tells whether a unit is done attacking</param>
+		internal void DoneAttacking(AIUnit unit)
+		{
+			AttackTimer = 0.0f;
+			IsAttacking = false;
+			unit.SetBattleState(AIUnitBattleState.Normal);
 		}
 		#endregion
 
@@ -204,26 +250,26 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		private void RotationMovement()
 		{
 			// Finds out how many degrees each unit will cover. Based on 180.0 to -180.0 degrees.
-			var angleDivision = 360.0f / (Units.Count);
+			var angleDivision = 360.0f / (AliveUnits.Count);
 
 			// Used to determine the margin of error angles.
 			var angleMOE = 10.0f;
 
 			// Sorts the Units based on the index
-			var unitsByIndex = Units.OrderBy(u => u.Index).ToList();
+			var unitsByIndex = AliveUnits.OrderBy(u => u.Index).ToList();
 
 			// Used to distribute the units between -180 and 180
 			var positiveObjects = 0;
 			var negativeOjects = 1;
 
 			// For each unit, distribute their position between the positive and negative angles
-			for (var i = 0; i < Units.Count; i++)
+			for (var i = 0; i < unitsByIndex.Count; i++)
 			{
 				// Determines if the unit will be placed in the positive or negative angles
 				var positiveRotation = i % 2 == 0 ? true : false;
 
 				// Grab the unit.
-				var unit = Units[i];
+				var unit = unitsByIndex[i];
 
 				// Find the position and rotation relative to the Target player
 				var unitToTargetLocalPosition = TargetPlayer.transform.InverseTransformPoint(unit.transform.position);
@@ -251,28 +297,30 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 					var positiveBaseMOE = positiveBaseAngle + angleMOE;
 					var negativeBaseMOE = positiveBaseAngle - angleMOE;
 
-					// Based on what angle the unit is at then rotate the unit.
-					if (MathAngle.NeedToAdjustClockwise(unitToTargetLocalRotation, positiveBaseAngle, negativeAngle))
+					if (unit.BattleState != AIUnitBattleState.Attacking)
 					{
-						// Rotate clockwise at normal speed
-						unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * 20);
+						// Based on what angle the unit is at then rotate the unit.
+						if (MathAngle.NeedToAdjustClockwise(unitToTargetLocalRotation, positiveBaseAngle, negativeAngle))
+						{
+							// Rotate clockwise at normal speed
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * 20);
+						}
+						else if (MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, positiveBaseAngle, positiveAngle))
+						{
+							// Rotate counter clockwise at normal speed
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * -20);
+						}
+						else if (MathAngle.NeedToAdjustClockwise(unitToTargetLocalRotation, negativeBaseMOE, negativeBaseMOE))
+						{
+							// Rotate clockwise at half speed
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * 10);
+						}
+						else if (MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, positiveBaseMOE, positiveBaseMOE))
+						{
+							// Rotate counter clockwise at half speed
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * -10);
+						}
 					}
-					else if (MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, positiveBaseAngle, positiveAngle))
-					{
-						// Rotate counter clockwise at normal speed
-						unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * -20);
-					}
-					else if (MathAngle.NeedToAdjustClockwise(unitToTargetLocalRotation, negativeBaseMOE, negativeBaseMOE))
-					{
-						// Rotate clockwise at half speed
-						unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * 10);
-					}
-					else if (MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, positiveBaseMOE, positiveBaseMOE))
-					{
-						// Rotate counter clockwise at half speed
-						unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * -10);
-					}
-
 					// Increase positive index
 					positiveObjects++;
 				}
@@ -293,28 +341,30 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 					var positiveBaseMOE = negativeBaseAngle + angleMOE;
 					var negativeBaseMOE = negativeBaseAngle - angleMOE;
 
-					// Based on what angle the unit is at then rotate the unit.
-					if (MathAngle.NeedToAdjustClockwise(unitToTargetLocalRotation, negativeBaseAngle, negativeAngle))
+					if (unit.BattleState != AIUnitBattleState.Attacking)
 					{
-						// Rotate clockwise at normal speed
-						unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * 20);
+						// Based on what angle the unit is at then rotate the unit.
+						if (MathAngle.NeedToAdjustClockwise(unitToTargetLocalRotation, negativeBaseAngle, negativeAngle))
+						{
+							// Rotate clockwise at normal speed
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * 20);
+						}
+						else if (MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, negativeBaseAngle, positiveAngle))
+						{
+							// Rotate counter clockwise at normal speed
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * -20);
+						}
+						else if (MathAngle.NeedToAdjustClockwise(unitToTargetLocalRotation, negativeBaseMOE, negativeBaseMOE))
+						{
+							// Rotate clockwise at half speed
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * 10);
+						}
+						else if (MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, positiveBaseMOE, positiveBaseMOE))
+						{
+							// Rotate counter clockwise at half speed
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * -10);
+						}
 					}
-					else if(MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, negativeBaseAngle, positiveAngle))
-					{
-						// Rotate counter clockwise at normal speed
-						unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * -20);
-					}
-					else if (MathAngle.NeedToAdjustClockwise(unitToTargetLocalRotation, negativeBaseMOE, negativeBaseMOE))
-					{
-						// Rotate clockwise at half speed
-						unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * 10);
-					}
-					else if (MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, positiveBaseMOE, positiveBaseMOE))
-					{
-						// Rotate counter clockwise at half speed
-						unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * -10);
-					}
-
 					// Increase negative index
 					negativeOjects++;
 				}
@@ -331,7 +381,7 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		{
 			var foundPlayer = false;
 
-			foreach (var unit in Units)
+			foreach (var unit in AliveUnits)
 			{
 				if(unit.PlayerInSight)
 				{
@@ -353,7 +403,7 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 
 			if(FoundPlayer)
 			{
-				foreach(var unit in Units)
+				foreach(var unit in AliveUnits)
 				{
 					if(unit.TargetPlayer != null)
 					{
@@ -371,14 +421,14 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		/// Calculates the current health of the group by adding all of the units' health values in the group
 		/// </summary>
 		/// <returns>All of the health values added together</returns>
-		private float CalcGroupHealth()
+		internal float CalcGroupHealth()
 		{
 			float groupHealth = 0.0f;
 
 			// If there are any units in the group, add their current health values to the total
-			if(Units.Count != 0)
+			if(AliveUnits.Count != 0)
 			{
-				foreach(var unit in Units)
+				foreach(var unit in AliveUnits)
 				{
 					groupHealth += unit.Health;
 				}
@@ -391,14 +441,14 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		/// Calculates the total health of the group by adding all of the units' max health values in the group
 		/// </summary>
 		/// <returns>All of the max health values added together</returns>
-		private float CalcGroupTotalHealth()
+		internal float CalcGroupTotalHealth()
 		{
 			float totalGroupHealth = 0.0f;
 
 			// If there are any units in the group, add their max health values to the total
-			if (Units.Count != 0)
+			if (AliveUnits.Count != 0)
 			{
-				foreach(var unit in Units)
+				foreach(var unit in AliveUnits)
 				{
 					totalGroupHealth += unit.MaxHealth;
 				}
@@ -411,16 +461,16 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		/// Calculate the weakest unit in the group
 		/// </summary>
 		/// <returns>The unit with the lowest health</returns>
-		private AIUnit CalcWeakestUnit()
+		internal AIUnit CalcWeakestUnit()
 		{
 			AIUnit weakestUnit = null;
 
 			// If there are any units in the group, determine which one has the lowest health value.
-			if(Units.Count != 0)
+			if(AliveUnits.Count != 0)
 			{
-				weakestUnit = Units[0];
+				weakestUnit = AliveUnits[0];
 
-				foreach(var unit in Units)
+				foreach(var unit in AliveUnits)
 				{
 					// If the unit has less health than the weakest unit, then assign unit to being the weakestUnit variable.
 					if(unit.Health < weakestUnit.Health)
@@ -437,16 +487,16 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		/// Calculates the strongest unit in the group
 		/// </summary>
 		/// <returns>The unit with the highest health</returns>
-		private AIUnit CalcStrongestUnit()
+		internal AIUnit CalcStrongestUnit()
 		{
 			AIUnit strongestUnit = null;
 
 			// If there are any units in the group, determine which one has the highest health value.
-			if (Units.Count != 0)
+			if (AliveUnits.Count != 0)
 			{
-				strongestUnit = Units[0];
+				strongestUnit = AliveUnits[0];
 
-				foreach (var unit in Units)
+				foreach (var unit in AliveUnits)
 				{
 					// If the unit has more health than the strongest unit, then assign unit to being the strongestUnit variable.
 					if (unit.Health > strongestUnit.Health)
@@ -459,30 +509,40 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			return strongestUnit;
 		}
 
-		private void CalcUnitIndex()
+		/// <summary>
+		/// Calculates the index of each unit in the group which determines their priority in the list
+		/// </summary>
+		internal void CalcUnitIndex()
 		{
-			for(var i = 0; i < Units.Count; i++)
+			// for every unit in the group, determine unit priority
+			for(var i = 0; i < AliveUnits.Count; i++)
 			{
-				var unit = Units[i];
+				// Grab the unit and create a default priority
+				var unit = AliveUnits[i];
 				var indexPriority = 0;
-				var tempUnits = Units;
+
+				// Create a temp array of the unit group and remove the current unit from the temp array
+				var tempUnits = AliveUnits;
 				tempUnits.RemoveAt(i);
 
-
+				// For every unit in the temp array, determine the priority of the current unit
 				foreach (var otherUnits in tempUnits)
 				{
+					// Lower health means lower priority
 					if (unit.Health < otherUnits.Health)
 					{
 						indexPriority++;
 					}
 				}
 
-				foreach (var otherUnits in tempUnits)
+				// Check for any units with the same priority and increase current unit priority
+				var matchingUnitIndices = tempUnits.Where(tempUnit => tempUnit.Index == indexPriority);
+				if (matchingUnitIndices.Count() > 0)
 				{
-					if (indexPriority == otherUnits.Index)
-						indexPriority++;
+					indexPriority += matchingUnitIndices.Count();
 				}
 
+				// Set the unit index
 				unit.Index = indexPriority;
 			}
 		}
