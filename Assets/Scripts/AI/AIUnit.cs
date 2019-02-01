@@ -202,8 +202,14 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		/// </summary>
 		private void MaintainDistance()
 		{
+			var playerControls = TargetPlayer.GetComponent<PlayerControls>();
+
 			var distance = Vector3.Distance(transform.position, TargetPlayer.transform.position);
 			var move = MovementSpeed * Time.deltaTime;
+
+			// Slows down movement if player is moving to await player actions.
+			if (playerControls != null && playerControls.CurrentSpeed > playerControls.MovementSpeed / 2)
+				move = move / 2;
 
 			if (distance < MinDistanceFromPlayer)
 				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, -move);

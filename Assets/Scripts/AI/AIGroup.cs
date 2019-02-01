@@ -232,20 +232,25 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			 */
 			if (GroupState != AIGroupState.Normal)
 			{
-				RotationMovement();
+				var playerControls = TargetPlayer.GetComponent<PlayerControls>();
 
-				if (!_isAttacking && _readyToAttack)
+				if (playerControls != null && playerControls.CurrentSpeed < playerControls.MovementSpeed / 2)
 				{
-					// Random chance to attack during this time
-					bool attackChance = Random.value > 0.5f;
-					if (attackChance)
-					{
-						var randomNum = Random.Range(0, AliveUnits.Count() - 1);
-						AliveUnits[randomNum].SetBattleState(AIUnitBattleState.Attacking);
-					}
-				}
+					RotationMovement();
 
-				_lastAttackTimer += Time.deltaTime;
+					if (!_isAttacking && _readyToAttack)
+					{
+						// Random chance to attack during this time
+						bool attackChance = Random.value > 0.5f;
+						if (attackChance)
+						{
+							var randomNum = Random.Range(0, AliveUnits.Count() - 1);
+							AliveUnits[randomNum].SetBattleState(AIUnitBattleState.Attacking);
+						}
+					}
+
+					_lastAttackTimer += Time.deltaTime;
+				}
 			}
 		}
 
@@ -270,7 +275,7 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			var angleMOE = 10.0f;
 
 			// Sorts the Units based on the index
-			var unitsByIndex = AliveUnits.OrderBy(u => u.Index).ToList();
+			var unitsByIndex = AliveUnits.OrderByDescending(u => u.Index).ToList();
 
 			// Used to distribute the units between -180 and 180
 			var positiveObjects = 0;
@@ -317,22 +322,22 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 						if (MathAngle.NeedToAdjustClockwise(unitToTargetLocalRotation, positiveBaseAngle, negativeAngle))
 						{
 							// Rotate clockwise at normal speed
-							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * 20);
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * 10);
 						}
 						else if (MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, positiveBaseAngle, positiveAngle))
 						{
 							// Rotate counter clockwise at normal speed
-							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * -20);
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * -10);
 						}
 						else if (MathAngle.NeedToAdjustClockwise(unitToTargetLocalRotation, negativeBaseMOE, negativeBaseMOE))
 						{
 							// Rotate clockwise at half speed
-							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * 10);
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * 5);
 						}
 						else if (MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, positiveBaseMOE, positiveBaseMOE))
 						{
 							// Rotate counter clockwise at half speed
-							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * -10);
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * -5);
 						}
 					}
 					// Increase positive index
@@ -361,22 +366,22 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 						if (MathAngle.NeedToAdjustClockwise(unitToTargetLocalRotation, negativeBaseAngle, negativeAngle))
 						{
 							// Rotate clockwise at normal speed
-							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * 20);
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * 10);
 						}
 						else if (MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, negativeBaseAngle, positiveAngle))
 						{
 							// Rotate counter clockwise at normal speed
-							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * -20);
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * -10);
 						}
 						else if (MathAngle.NeedToAdjustClockwise(unitToTargetLocalRotation, negativeBaseMOE, negativeBaseMOE))
 						{
 							// Rotate clockwise at half speed
-							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * 10);
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * 5);
 						}
 						else if (MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, positiveBaseMOE, positiveBaseMOE))
 						{
 							// Rotate counter clockwise at half speed
-							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * -10);
+							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * -5);
 						}
 					}
 					// Increase negative index
