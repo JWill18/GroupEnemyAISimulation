@@ -7,7 +7,11 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Camera
 	{
 		public PlayerControls FocusObject;
 
-		public float CameraDistanceLag;
+		public float CameraDistanceLagX;
+
+		public float CameraDistanceLagZ;
+
+		public float MoveSpeed;
 
 		// Use this for initialization
 		void Start()
@@ -18,18 +22,64 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Camera
 		// Update is called once per frame
 		void Update()
 		{
-			if(FocusObject.CurrentSpeed > 0)
+			if(!IsPlayerInView())
 			{
-				if(FocusObject.transform.position.x > transform.position.x + CameraDistanceLag || FocusObject.transform.position.x < transform.position.x - CameraDistanceLag 
-					|| FocusObject.transform.position.z > transform.position.z + CameraDistanceLag || FocusObject.transform.position.z < transform.position.z - CameraDistanceLag)
-				{
-					var xDestination = FocusObject.transform.position.x;
-					var zDestination = FocusObject.transform.position.z;
+				var distanceFromFocusObject = FocusObject.transform.position - transform.position;
 
-					var newDestination = new Vector3(xDestination, transform.position.y, zDestination);
-					transform.position = Vector3.Lerp(transform.position, newDestination, Time.deltaTime);
+				var moveX = 0.0f;
+				var moveZ = 0.0f;
+
+				if(!IsPlayerInViewNegativeX(distanceFromFocusObject.x))
+				{
+					moveX = -MoveSpeed;
 				}
+				else if (!IsPlayerInViewPositiveX(distanceFromFocusObject.x))
+				{
+					moveX = MoveSpeed;
+				}
+
+				if(!IsPlayerInViewNegativeZ(distanceFromFocusObject.z))
+				{
+					moveZ = -MoveSpeed;
+				}
+				else if (!IsPlayerInViewPositiveZ(distanceFromFocusObject.z))
+				{
+					moveZ = MoveSpeed;
+				}
+
+				transform.Translate(moveX * Time.deltaTime, 0, moveZ * Time.deltaTime);
 			}
+		}
+
+		private bool IsPlayerInView()
+		{
+			var distanceFromFocusObject = transform.position - FocusObject.transform.position;
+
+			var withinXView = IsPlayerInViewNegativeX(distanceFromFocusObject.x) && IsPlayerInViewPositiveX(distanceFromFocusObject.x);
+
+			var withinZView = IsPlayerInViewNegativeZ(distanceFromFocusObject.z) && IsPlayerInViewPositiveZ(distanceFromFocusObject.z);
+
+			return withinXView && withinZView;
+		}
+
+		private bool IsPlayerInViewPositiveX(float xDifference)
+		{
+			return xDifference < CameraDistanceLagX;
+		}
+
+		private bool IsPlayerInViewNegativeX(float xDifference)
+		{
+			return xDifference > -CameraDistanceLagX;
+		}
+
+		private bool IsPlayerInViewPositiveZ(float ZDifference)
+		{
+			return ZDifference < CameraDistanceLagZ;
+		}
+
+		private bool IsPlayerInViewNegativeZ(float ZDifference)
+		{
+			return ZDifference > 5.0f;
 		}
 	}
 }

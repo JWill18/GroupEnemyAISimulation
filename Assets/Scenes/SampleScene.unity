@@ -513,7 +513,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 282840810}
   m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: 3.3900003, z: -3.3899994}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1120828251}
@@ -811,7 +811,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FocusObject: {fileID: 140260858}
-  CameraDistanceLag: 0
+  CameraDistanceLagX: 5
+  CameraDistanceLagZ: 7
+  MoveSpeed: 4
 --- !u!4 &1120828251
 Transform:
   m_ObjectHideFlags: 0
@@ -820,7 +822,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1120828249}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 5, z: -23.52}
+  m_LocalPosition: {x: 0, y: 6.7, z: -25.96}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 282840814}
