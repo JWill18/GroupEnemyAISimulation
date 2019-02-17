@@ -286,7 +286,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Health: 50
   MaxHealth: 50
-  MovementSpeed: 5
+  MovementSpeed: 3
   BaseDamage: 10
   AttackRange: 1
   TargetPlayer: {fileID: 0}
@@ -513,7 +513,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 282840810}
   m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1120828251}
@@ -568,7 +568,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Health: 50
   MaxHealth: 50
-  MovementSpeed: 5
+  MovementSpeed: 3
   BaseDamage: 10
   AttackRange: 1
   TargetPlayer: {fileID: 0}
@@ -699,7 +699,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Health: 60
   MaxHealth: 50
-  MovementSpeed: 5
+  MovementSpeed: 3
   BaseDamage: 15
   AttackRange: 1
   TargetPlayer: {fileID: 0}
@@ -1025,7 +1025,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Health: 50
   MaxHealth: 50
-  MovementSpeed: 5
+  MovementSpeed: 3
   BaseDamage: 10
   AttackRange: 1
   TargetPlayer: {fileID: 0}
@@ -1156,7 +1156,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Health: 50
   MaxHealth: 50
-  MovementSpeed: 5
+  MovementSpeed: 3
   BaseDamage: 10
   AttackRange: 1
   TargetPlayer: {fileID: 0}
@@ -1287,7 +1287,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Health: 50
   MaxHealth: 50
-  MovementSpeed: 5
+  MovementSpeed: 3
   BaseDamage: 10
   AttackRange: 1
   TargetPlayer: {fileID: 0}

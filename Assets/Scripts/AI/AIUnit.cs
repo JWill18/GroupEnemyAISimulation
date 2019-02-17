@@ -209,7 +209,7 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 
 			// Slows down movement if player is moving to await player actions.
 			if (playerControls != null && playerControls.CurrentSpeed > playerControls.MovementSpeed / 2)
-				move = move / 2;
+				move = move / 4;
 
 			if (distance < MinDistanceFromPlayer)
 				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, -move);
