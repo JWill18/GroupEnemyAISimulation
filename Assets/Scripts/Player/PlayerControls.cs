@@ -47,13 +47,18 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Player
 
 		#region Camera
 		public UnityEngine.Camera Camera;
+
+		private Plane _cameraPlane;
 		#endregion
 
 		#region MonoBehaviour
 		// Use this for initialization
 		void Start()
 		{
-
+			if(Camera != null)
+			{
+				_cameraPlane = new Plane(Vector3.up, Vector3.zero);
+			}
 		}
 
 		// Update is called once per frame
@@ -76,14 +81,17 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Player
 		#region Mouse
 		public void LookAtCursor()
 		{
-			var mouseX = Input.mousePosition.x;
-			var mouseY = Input.mousePosition.y;
-			var cameraDif = Camera.transform.position.y - transform.position.y;
-			var worldpos = Camera.ScreenToWorldPoint(new Vector3(mouseX, mouseY, cameraDif));
+			var ray = Camera.ScreenPointToRay(Input.mousePosition);
+			float distance;
 
-			Vector3 cursorDirection = new Vector3(worldpos.x, transform.position.y, worldpos.z);
+			if(_cameraPlane.Raycast(ray, out distance))
+			{
+				var hitpoint = ray.GetPoint(distance);
+				print(hitpoint);
+				var cursorDirection = new Vector3(hitpoint.x, transform.position.y, hitpoint.z);
+				transform.LookAt(cursorDirection);
 
-			transform.LookAt(cursorDirection);
+			}
 		}
 		#endregion
 
