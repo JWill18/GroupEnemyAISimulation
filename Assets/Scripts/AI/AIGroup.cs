@@ -234,7 +234,7 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			{
 				var playerControls = TargetPlayer.GetComponent<PlayerControls>();
 
-				if (playerControls != null && playerControls.CurrentSpeed < playerControls.MovementSpeed / 2)
+				if (playerControls != null && playerControls.CurrentMoveSpeed < playerControls.MovementSpeed / 2)
 				{
 					RotationMovement();
 

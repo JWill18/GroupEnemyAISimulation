@@ -6,14 +6,14 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Player
 	{
 		#region Movement Properties
 		/// <summary>
-		/// The speed that the camera moves.
+		/// The speed that the player moves.
 		/// </summary>
 		public float MovementSpeed;
 
 		/// <summary>
 		/// Returns the current speed of the player.
 		/// </summary>
-		public float CurrentSpeed
+		public float CurrentMoveSpeed
 		{ get
 			{
 				// Compares the speed in both directions and takes the higher speed

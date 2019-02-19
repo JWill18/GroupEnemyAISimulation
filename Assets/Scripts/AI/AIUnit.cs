@@ -208,7 +208,7 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			var move = MovementSpeed * Time.deltaTime;
 
 			// Slows down movement if player is moving to await player actions.
-			if (playerControls != null && playerControls.CurrentSpeed > playerControls.MovementSpeed / 2)
+			if (playerControls != null && playerControls.CurrentMoveSpeed > playerControls.MovementSpeed / 2)
 				move = move / 4;
 
 			if (distance < MinDistanceFromPlayer)
