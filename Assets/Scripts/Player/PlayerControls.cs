@@ -87,7 +87,6 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Player
 			if(_cameraPlane.Raycast(ray, out distance))
 			{
 				var hitpoint = ray.GetPoint(distance);
-				print(hitpoint);
 				var cursorDirection = new Vector3(hitpoint.x, transform.position.y, hitpoint.z);
 				transform.LookAt(cursorDirection);
 
