@@ -288,7 +288,8 @@ MonoBehaviour:
   MaxHealth: 50
   MovementSpeed: 3
   BaseDamage: 10
-  AttackRange: 1
+  AttackRange: 1.5
+  IsAttacking: 0
   TargetPlayer: {fileID: 0}
   SightRadius: 15
   SightAngles: 30
@@ -570,7 +571,8 @@ MonoBehaviour:
   MaxHealth: 50
   MovementSpeed: 3
   BaseDamage: 10
-  AttackRange: 1
+  AttackRange: 1.5
+  IsAttacking: 0
   TargetPlayer: {fileID: 0}
   SightRadius: 15
   SightAngles: 30
@@ -902,7 +904,8 @@ MonoBehaviour:
   MaxHealth: 50
   MovementSpeed: 3
   BaseDamage: 10
-  AttackRange: 1
+  AttackRange: 1.5
+  IsAttacking: 0
   TargetPlayer: {fileID: 0}
   SightRadius: 15
   SightAngles: 30
@@ -1033,7 +1036,8 @@ MonoBehaviour:
   MaxHealth: 50
   MovementSpeed: 3
   BaseDamage: 10
-  AttackRange: 1
+  AttackRange: 1.5
+  IsAttacking: 0
   TargetPlayer: {fileID: 0}
   SightRadius: 15
   SightAngles: 30
@@ -1164,7 +1168,8 @@ MonoBehaviour:
   MaxHealth: 50
   MovementSpeed: 3
   BaseDamage: 10
-  AttackRange: 1
+  AttackRange: 1.5
+  IsAttacking: 0
   TargetPlayer: {fileID: 0}
   SightRadius: 15
   SightAngles: 30
@@ -1274,22 +1279,22 @@ PrefabInstance:
     - target: {fileID: 2078574388143515396, guid: 64ccd7feb8f48d04fa866b5f69dd5f77,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2078574388143515396, guid: 64ccd7feb8f48d04fa866b5f69dd5f77,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.99797773
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2078574388143515396, guid: 64ccd7feb8f48d04fa866b5f69dd5f77,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2078574388143515396, guid: 64ccd7feb8f48d04fa866b5f69dd5f77,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.06356489
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2078574388143515396, guid: 64ccd7feb8f48d04fa866b5f69dd5f77,
         type: 3}
@@ -1304,7 +1309,7 @@ PrefabInstance:
     - target: {fileID: 2078574388143515396, guid: 64ccd7feb8f48d04fa866b5f69dd5f77,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 187.28899
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 2078574388143515396, guid: 64ccd7feb8f48d04fa866b5f69dd5f77,
         type: 3}
@@ -1325,6 +1330,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8553835135687023549, guid: 64ccd7feb8f48d04fa866b5f69dd5f77,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2078574388143515397, guid: 64ccd7feb8f48d04fa866b5f69dd5f77,
+        type: 3}
+      propertyPath: AttackRange
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64ccd7feb8f48d04fa866b5f69dd5f77, type: 3}
