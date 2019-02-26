@@ -1,5 +1,7 @@
 ﻿using GroupEnemyAISimulation.Assets.Scripts.Enum;
 using GroupEnemyAISimulation.Assets.Scripts.Player;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -38,6 +40,11 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		/// The Unit must be within attacking range to be able to hit the player
 		/// </summary>
 		public float AttackRange;
+
+		/// <summary>
+		/// Determines if the player is currently attacking or not
+		/// </summary>
+		public bool IsAttacking;
 
 		/// <summary>
 		/// The state of the unit in battle
@@ -88,13 +95,17 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		/// The Unit Group index of priorities
 		/// </summary>
 		internal int Index;
+
+		/// <summary>
+		/// The animator that is in charge of animation transitions
+		/// </summary>
+		internal Animator UnitAnimator { get { return GetComponentInChildren<Animator>(); } }
 		#endregion
 
 		#region MonoBehaviour
 		// Use this for initialization
 		void Start()
 		{
-
 		}
 
 		// Update is called once per frame
@@ -111,15 +122,15 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 				}
 				else
 				{
-					//Close in on Player
-					MoveTowardsTargetPlayer();
-
-					if (InAttackRange)
+					if (InAttackRange && !IsAttacking)
 					{
 						// Attack Player
-						AttackTargetPlayer();
-
-						UnitGroup.DoneAttacking(this);
+						StartCoroutine(AttackTargetPlayer());
+					}
+					else if (!InAttackRange)
+					{
+						//Close in on Player
+						MoveTowardsTargetPlayer();
 					}
 				}
 			}
@@ -205,16 +216,28 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			var playerControls = TargetPlayer.GetComponent<PlayerControls>();
 
 			var distance = Vector3.Distance(transform.position, TargetPlayer.transform.position);
-			var move = MovementSpeed * Time.deltaTime;
+
+			var move = MovementSpeed;
 
 			// Slows down movement if player is moving to await player actions.
 			if (playerControls != null && playerControls.CurrentMoveSpeed > playerControls.MovementSpeed / 2)
-				move = move / 4;
+				move = MovementSpeed / 4;
 
 			if (distance < MinDistanceFromPlayer)
-				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, -move);
+			{
+				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, -move * Time.deltaTime);
+			}
 			else if (distance > MaxDistanceFromPlayer)
-				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, move);
+			{
+				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, move * Time.deltaTime);
+			}
+			else
+			{
+				move = 0;
+			}
+
+			if(UnitAnimator != null && BattleState != AIUnitBattleState.Attacking)
+				UnitAnimator.SetFloat("MoveSpeed", move);
 		}
 
 		/// <summary>
@@ -233,14 +256,29 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			{
 				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, -move);
 			}
+
+			if (UnitAnimator != null && BattleState == AIUnitBattleState.Attacking)
+				UnitAnimator.SetFloat("MoveSpeed", MovementSpeed);
+
 		}
 		#endregion
 
 		#region Combat
-		private void AttackTargetPlayer()
+		private IEnumerator AttackTargetPlayer()
 		{
+			if (UnitAnimator != null)
+				UnitAnimator.SetBool("IsAttacking", true);
+			IsAttacking = true;
+
 			var playerControl = TargetPlayer.GetComponent<PlayerControls>();
 			playerControl.TakeDamage(BaseDamage);
+
+			yield return new WaitForSeconds(1.30f);
+			if (UnitAnimator != null)
+				UnitAnimator.SetBool("IsAttacking", false);
+
+			IsAttacking = false;
+			UnitGroup.DoneAttacking(this);
 		}
 		#endregion
 
