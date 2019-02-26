@@ -1341,5 +1341,10 @@ PrefabInstance:
       propertyPath: AttackRange
       value: 1.5
       objectReference: {fileID: 0}
+    - target: {fileID: 8553835135675812573, guid: 64ccd7feb8f48d04fa866b5f69dd5f77,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0ff78e7e508138e4c84d046f023265c5, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64ccd7feb8f48d04fa866b5f69dd5f77, type: 3}
