@@ -9,12 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2078574388143515396}
-  - component: {fileID: 2078574388143515392}
   - component: {fileID: 2078574388143515397}
   - component: {fileID: 2078574388143515393}
   - component: {fileID: 36516344144400910}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: Ganfault
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,14 +34,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2078574388143515392
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2078574388143515399}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &2078574388143515397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,7 +50,7 @@ MonoBehaviour:
   MaxHealth: 50
   MovementSpeed: 3
   BaseDamage: 15
-  AttackRange: 1
+  AttackRange: 1.5
   IsAttacking: 0
   TargetPlayer: {fileID: 0}
   SightRadius: 15
@@ -103,10 +94,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2078574388143515396}
     m_Modifications:
-    - target: {fileID: 100064, guid: 5753a1f27492f6d41a499b19e60ecb6b, type: 3}
-      propertyPath: m_Name
-      value: Mixamo_Ganfault_Aure
-      objectReference: {fileID: 0}
     - target: {fileID: 400064, guid: 5753a1f27492f6d41a499b19e60ecb6b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -162,6 +149,10 @@ PrefabInstance:
     - target: {fileID: 400064, guid: 5753a1f27492f6d41a499b19e60ecb6b, type: 3}
       propertyPath: m_LocalScale.z
       value: 1.0000005
+      objectReference: {fileID: 0}
+    - target: {fileID: 100064, guid: 5753a1f27492f6d41a499b19e60ecb6b, type: 3}
+      propertyPath: m_Name
+      value: Mixamo_Ganfault_Aure
       objectReference: {fileID: 0}
     - target: {fileID: 9500000, guid: 5753a1f27492f6d41a499b19e60ecb6b, type: 3}
       propertyPath: m_Controller
