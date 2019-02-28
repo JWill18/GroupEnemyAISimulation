@@ -141,7 +141,12 @@ ModelImporter:
     4300000: Mixamo_Ganfault_Aure
     9500000: //RootNode
     13700000: Mixamo_Ganfault_Aure 1
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Ganfaul_Mat
+    second: {fileID: 2100000, guid: 0ff78e7e508138e4c84d046f023265c5, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

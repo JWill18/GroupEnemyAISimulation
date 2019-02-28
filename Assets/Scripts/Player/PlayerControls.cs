@@ -43,10 +43,17 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Player
 		/// The maximum amount the health can be.
 		/// </summary>
 		public float MaxHealth;
-		#endregion
+        #endregion
 
-		#region Camera
-		public UnityEngine.Camera Camera;
+        #region Animations
+        /// <summary>
+		/// The animator that is in charge of animation transitions
+		/// </summary>
+		private Animator PlayerAnimator { get { return GetComponentInChildren<Animator>(); } }
+        #endregion
+
+        #region Camera
+        public UnityEngine.Camera Camera;
 
 		private Plane _cameraPlane;
 		#endregion
@@ -64,15 +71,20 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Player
 		// Update is called once per frame
 		void Update()
 		{
-			if (Input.GetAxis("Vertical") != 0)
+			if (_verticalSpeed != 0)
 			{
-				transform.Translate(Vector3.forward * Input.GetAxis("Vertical") * MovementSpeed * Time.deltaTime, Space.World);
+                PlayerAnimator.SetFloat("MoveSpeed", MovementSpeed);
+                transform.Translate(Vector3.forward * Input.GetAxis("Vertical") * MovementSpeed * Time.deltaTime, Space.World);
 			}
 
-			if (Input.GetAxis("Horizontal") != 0)
+			if (_horizontalSpeed != 0)
 			{
-				transform.Translate(Vector3.right * Input.GetAxis("Horizontal") * MovementSpeed * Time.deltaTime, Space.World);
+                PlayerAnimator.SetFloat("MoveSpeed", MovementSpeed);
+                transform.Translate(Vector3.right * Input.GetAxis("Horizontal") * MovementSpeed * Time.deltaTime, Space.World);
 			}
+
+            if (_verticalSpeed == 0 && _horizontalSpeed == 0)
+                PlayerAnimator.SetFloat("MoveSpeed", 0);
 
 			LookAtCursor();
 		}
