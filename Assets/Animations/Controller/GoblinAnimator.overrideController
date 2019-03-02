@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: GoblinAnimator
+  m_Controller: {fileID: 9100000, guid: 0a3a45052176d5344a130972e0a30d90, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: c792d097e8d447440b060c6dd101e170, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: 00c7a7c173013ab41b20f20d1d1bcf58, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 1c440dc26b71cfa4aa77415619d2ac9d, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: 1c440dc26b71cfa4aa77415619d2ac9d, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 4c5815f5b37c61b4f9747a40d70804d1, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: 4c5815f5b37c61b4f9747a40d70804d1, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: d4a532c560fdb854ab015a4227c3059a, type: 3}
+    m_OverrideClip: {fileID: 7400000, guid: d4a532c560fdb854ab015a4227c3059a, type: 3}
