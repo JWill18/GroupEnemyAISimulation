@@ -305,7 +305,17 @@ ModelImporter:
     13700000: Gobiln_eyes
     13700002: Goblin
     2186277476908879412: ImportLogs
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: eyes_eyes_lambert
+    second: {fileID: 2100000, guid: 260930d20ac9bdb4dadd0e61b906deef, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: phong1
+    second: {fileID: 2100000, guid: a9fc50b3abec8b547a198690fcb3e830, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -317,8 +327,7 @@ ModelImporter:
     resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
-    rigImportErrors: "Avatar creation failed:\n\tTransform 'Armature' not found in
-      HumanDescription.\n"
+    rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
