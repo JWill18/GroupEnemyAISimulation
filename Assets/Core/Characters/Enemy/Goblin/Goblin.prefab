@@ -1,24 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!95 &4550097645232762330
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 630197458878556086}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 3033ad1df9d9f4040b40c57cb6fd0653, type: 3}
-  m_Controller: {fileID: 22100000, guid: df127869c46fe4c4e99f363cf3358479, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &7580285832855296281
 GameObject:
   m_ObjectHideFlags: 0
@@ -31,6 +12,7 @@ GameObject:
   - component: {fileID: 7580285832855296295}
   - component: {fileID: 7580285832855296291}
   - component: {fileID: 1407111841988038064}
+  - component: {fileID: 7898627263123058278}
   m_Layer: 0
   m_Name: Goblin
   m_TagString: Untagged
@@ -106,6 +88,25 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!95 &7898627263123058278
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7580285832855296281}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 3033ad1df9d9f4040b40c57cb6fd0653, type: 3}
+  m_Controller: {fileID: 22100000, guid: df127869c46fe4c4e99f363cf3358479, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &630197458878521620
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -175,12 +176,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7d5ab94a9db09c94a81fd5647cf80b1a, type: 3}
---- !u!1 &630197458878556086 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 100002, guid: 7d5ab94a9db09c94a81fd5647cf80b1a,
-    type: 3}
-  m_PrefabInstance: {fileID: 630197458878521620}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &630197458878135190 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400002, guid: 7d5ab94a9db09c94a81fd5647cf80b1a,

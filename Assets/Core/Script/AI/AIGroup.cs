@@ -323,21 +323,52 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 						{
 							// Rotate clockwise at normal speed
 							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * 10);
+
+							if (unit.UnitAnimator != null)
+							{
+								unit.UnitAnimator.SetInteger("StrafingDirection", 1);
+								unit.UnitAnimator.SetFloat("MoveSpeed", unit.MovementSpeed);
+							}
 						}
 						else if (MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, positiveBaseAngle, positiveAngle))
 						{
 							// Rotate counter clockwise at normal speed
 							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * -10);
+
+							if (unit.UnitAnimator != null)
+							{
+								unit.UnitAnimator.SetInteger("StrafingDirection", 2);
+								unit.UnitAnimator.SetFloat("MoveSpeed", unit.MovementSpeed);
+							}
 						}
 						else if (MathAngle.NeedToAdjustClockwise(unitToTargetLocalRotation, negativeBaseMOE, negativeBaseMOE))
 						{
 							// Rotate clockwise at half speed
 							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * 5);
+
+							if (unit.UnitAnimator != null)
+							{
+								unit.UnitAnimator.SetInteger("StrafingDirection", 1);
+								unit.UnitAnimator.SetFloat("MoveSpeed", unit.MovementSpeed/4);
+							}
 						}
 						else if (MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, positiveBaseMOE, positiveBaseMOE))
 						{
 							// Rotate counter clockwise at half speed
 							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * -5);
+
+							if (unit.UnitAnimator != null)
+							{
+								unit.UnitAnimator.SetInteger("StrafingDirection", 2);
+								unit.UnitAnimator.SetFloat("MoveSpeed", unit.MovementSpeed/4);
+							}
+						}
+						else
+						{
+							if (unit.UnitAnimator != null)
+							{
+								unit.UnitAnimator.SetInteger("StrafingDirection", 0);
+							}
 						}
 					}
 					// Increase positive index
@@ -367,21 +398,45 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 						{
 							// Rotate clockwise at normal speed
 							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * 10);
+
+							if (unit.UnitAnimator != null)
+							{
+								unit.UnitAnimator.SetInteger("StrafingDirection", 1);
+								unit.UnitAnimator.SetFloat("MoveSpeed", unit.MovementSpeed);
+							}
 						}
 						else if (MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, negativeBaseAngle, positiveAngle))
 						{
 							// Rotate counter clockwise at normal speed
 							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, unit.MovementSpeed * Time.deltaTime * -10);
+
+							if (unit.UnitAnimator != null)
+							{
+								unit.UnitAnimator.SetInteger("StrafingDirection", 2);
+								unit.UnitAnimator.SetFloat("MoveSpeed", unit.MovementSpeed);
+							}
 						}
 						else if (MathAngle.NeedToAdjustClockwise(unitToTargetLocalRotation, negativeBaseMOE, negativeBaseMOE))
 						{
 							// Rotate clockwise at half speed
 							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * 5);
+
+							if (unit.UnitAnimator != null)
+							{
+								unit.UnitAnimator.SetInteger("StrafingDirection", 1);
+								unit.UnitAnimator.SetFloat("MoveSpeed", unit.MovementSpeed / 4);
+							}
 						}
 						else if (MathAngle.NeedToAdjustCounterClockwise(unitToTargetLocalRotation, positiveBaseMOE, positiveBaseMOE))
 						{
 							// Rotate counter clockwise at half speed
 							unit.transform.RotateAround(TargetPlayer.transform.position, Vector3.up, (unit.MovementSpeed / 2) * Time.deltaTime * -5);
+
+							if (unit.UnitAnimator != null)
+							{
+								unit.UnitAnimator.SetInteger("StrafingDirection", 2);
+								unit.UnitAnimator.SetFloat("MoveSpeed", unit.MovementSpeed / 4);
+							}
 						}
 					}
 					// Increase negative index

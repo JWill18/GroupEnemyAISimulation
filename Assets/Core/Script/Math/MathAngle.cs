@@ -39,9 +39,9 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Math
 			bool lessThanAngle = false;
 
 			if (baseAngle > 0)
-				lessThanAngle = currentRotation < -180.0f + baseAngle;
+				lessThanAngle = currentRotation <= -180.0f + baseAngle;
 			else
-				lessThanAngle = currentRotation < 180.0f + baseAngle;
+				lessThanAngle = currentRotation <= 180.0f + baseAngle;
 
 			return lessThanAngle;
 		}
@@ -57,10 +57,10 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Math
 		{
 			if (baseAngle > 0)
 				//  Current rotation is less than the limit AND Current rotation is greater than the opposite angle
-				return currentRotation < angleLimit && IsGreaterThanFlippedAngle(currentRotation, baseAngle);
+				return currentRotation <= angleLimit && IsGreaterThanFlippedAngle(currentRotation, baseAngle);
 			else
 				//  (Limit is greater than -180 AND Current rotation is less than limit) OR (Limit is less than or equal to -180 AND current rotation is less than converted angle limit AND Current rotation is greater than the opposite angle of base)
-				return (angleLimit > -180.0f && currentRotation < angleLimit) || (angleLimit <= -180.0f && currentRotation < (180.0f - (-angleLimit - 180.0f)) && IsGreaterThanFlippedAngle(currentRotation, baseAngle));
+				return (angleLimit >= -180.0f && currentRotation <= angleLimit) || (angleLimit <= -180.0f && currentRotation <= (180.0f - (-angleLimit - 180.0f)) && IsGreaterThanFlippedAngle(currentRotation, baseAngle));
 		}
 
 		/// <summary>
@@ -74,10 +74,10 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Math
 		{
 			if (baseAngle > 0)
 				//  Current rotation greater than limit OR  Current rotation is less than the opposite angle of base
-				return currentRotation > angleLimit || IsLessThanFlippedAngle(currentRotation, baseAngle);
+				return currentRotation >= angleLimit || IsLessThanFlippedAngle(currentRotation, baseAngle);
 			else
 				//  Current rotation greater than limit AND Current rotation is less than the opposite angle of base
-				return currentRotation > angleLimit && IsLessThanFlippedAngle(currentRotation, baseAngle);
+				return currentRotation >= angleLimit && IsLessThanFlippedAngle(currentRotation, baseAngle);
 		}
 	}
 }

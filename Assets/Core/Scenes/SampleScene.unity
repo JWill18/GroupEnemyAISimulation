@@ -283,6 +283,31 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &276973211 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7580285832855296281, guid: 923575d8e12b48a43a8b54ccc54d2436,
+    type: 3}
+  m_PrefabInstance: {fileID: 978285199}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &276973215
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276973211}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 3033ad1df9d9f4040b40c57cb6fd0653, type: 3}
+  m_Controller: {fileID: 22100000, guid: df127869c46fe4c4e99f363cf3358479, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &282840810
 GameObject:
   m_ObjectHideFlags: 0
@@ -460,7 +485,8 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4550097645232762330, guid: 923575d8e12b48a43a8b54ccc54d2436, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 923575d8e12b48a43a8b54ccc54d2436, type: 3}
 --- !u!1 &1120828249
 GameObject:
@@ -753,6 +779,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1832581090}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1826749581 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6843076195383621342, guid: 24a9be951eaf5a540a75f84bbc2e18c2,
+    type: 3}
+  m_PrefabInstance: {fileID: 1505754735472200318}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1832581090
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -849,6 +881,11 @@ PrefabInstance:
       propertyPath: Camera
       value: 
       objectReference: {fileID: 282840813}
+    - target: {fileID: 1505754735342452612, guid: 24a9be951eaf5a540a75f84bbc2e18c2,
+        type: 3}
+      propertyPath: PlayerCharacter
+      value: 
+      objectReference: {fileID: 1826749581}
     - target: {fileID: 1505754735342452608, guid: 24a9be951eaf5a540a75f84bbc2e18c2,
         type: 3}
       propertyPath: m_LocalPosition.x

@@ -43,17 +43,19 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Player
 		/// The maximum amount the health can be.
 		/// </summary>
 		public float MaxHealth;
-        #endregion
+		#endregion
 
-        #region Animations
-        /// <summary>
+		#region Animations
+		/// <summary>
 		/// The animator that is in charge of animation transitions
 		/// </summary>
 		private Animator PlayerAnimator { get { return GetComponentInChildren<Animator>(); } }
-        #endregion
 
-        #region Camera
-        public UnityEngine.Camera Camera;
+		public GameObject PlayerCharacter;
+		#endregion
+
+		#region Camera
+		public UnityEngine.Camera Camera;
 
 		private Plane _cameraPlane;
 		#endregion
@@ -73,35 +75,24 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Player
 		{
 			if (_verticalSpeed != 0)
 			{
-                PlayerAnimator.SetFloat("MoveSpeed", MovementSpeed);
-                transform.Translate(Vector3.forward * Input.GetAxis("Vertical") * MovementSpeed * Time.deltaTime, Space.World);
+				PlayerAnimator.SetFloat("MoveSpeed", MovementSpeed);
+				transform.Translate(Vector3.forward * Input.GetAxis("Vertical") * MovementSpeed * Time.deltaTime, Space.World);
 			}
 
 			if (_horizontalSpeed != 0)
 			{
-                PlayerAnimator.SetFloat("MoveSpeed", MovementSpeed);
-                transform.Translate(Vector3.right * Input.GetAxis("Horizontal") * MovementSpeed * Time.deltaTime, Space.World);
+				PlayerAnimator.SetFloat("MoveSpeed", MovementSpeed);
+				transform.Translate(Vector3.right * Input.GetAxis("Horizontal") * MovementSpeed * Time.deltaTime, Space.World);
 			}
 
-            if (_verticalSpeed == 0 && _horizontalSpeed == 0)
-                PlayerAnimator.SetFloat("MoveSpeed", 0);
-
-			LookAtCursor();
-		}
-		#endregion
-
-		#region Mouse
-		public void LookAtCursor()
-		{
-			var ray = Camera.ScreenPointToRay(Input.mousePosition);
-			float distance;
-
-			if(_cameraPlane.Raycast(ray, out distance))
+			if (_verticalSpeed == 0 && _horizontalSpeed == 0)
 			{
-				var hitpoint = ray.GetPoint(distance);
-				var cursorDirection = new Vector3(hitpoint.x, transform.position.y, hitpoint.z);
-				transform.LookAt(cursorDirection);
-
+				PlayerAnimator.SetFloat("MoveSpeed", 0);
+			}
+			else
+			{
+				var lookDirection = new Vector3(_horizontalSpeed, 0.0f, _verticalSpeed);
+				PlayerCharacter.transform.rotation = Quaternion.LookRotation(lookDirection);
 			}
 		}
 		#endregion

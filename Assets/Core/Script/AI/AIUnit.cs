@@ -124,8 +124,10 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 				{
 					if (InAttackRange && !IsAttacking)
 					{
+						if (UnitAnimator != null)
+							UnitAnimator.SetFloat("MoveSpeed", 0);
 						// Attack Player
-						StartCoroutine(AttackTargetPlayer());
+						AttackTargetPlayer();
 					}
 					else if (!InAttackRange)
 					{
@@ -223,11 +225,12 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 			if (playerControls != null && playerControls.CurrentMoveSpeed > playerControls.MovementSpeed / 2)
 				move = MovementSpeed / 4;
 
-			if (distance < MinDistanceFromPlayer)
+			if (distance <= MinDistanceFromPlayer)
 			{
-				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, -move * Time.deltaTime);
+				move = -move;
+				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, move * Time.deltaTime);
 			}
-			else if (distance > MaxDistanceFromPlayer)
+			else if (distance >= MaxDistanceFromPlayer)
 			{
 				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, move * Time.deltaTime);
 			}
@@ -236,7 +239,7 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 				move = 0;
 			}
 
-			if(UnitAnimator != null && BattleState != AIUnitBattleState.Attacking)
+			if(UnitAnimator != null)
 				UnitAnimator.SetFloat("MoveSpeed", move);
 		}
 
@@ -257,14 +260,14 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 				transform.position = Vector3.MoveTowards(transform.position, TargetPlayer.transform.position, -move);
 			}
 
-			if (UnitAnimator != null && BattleState == AIUnitBattleState.Attacking)
+			if (UnitAnimator != null)
 				UnitAnimator.SetFloat("MoveSpeed", MovementSpeed);
 
 		}
 		#endregion
 
 		#region Combat
-		private IEnumerator AttackTargetPlayer()
+		private void AttackTargetPlayer()
 		{
 			if (UnitAnimator != null)
 				UnitAnimator.SetBool("IsAttacking", true);
@@ -272,8 +275,10 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 
 			var playerControl = TargetPlayer.GetComponent<PlayerControls>();
 			playerControl.TakeDamage(BaseDamage);
+		}
 
-			yield return new WaitForSeconds(1.30f);
+		public void FinishAttacking()
+		{
 			if (UnitAnimator != null)
 				UnitAnimator.SetBool("IsAttacking", false);
 
