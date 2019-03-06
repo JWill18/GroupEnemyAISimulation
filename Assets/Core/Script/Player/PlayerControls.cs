@@ -31,6 +31,8 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Player
 		/// Returns the speed of the horizontal axis
 		/// </summary>
 		private float _horizontalSpeed { get { return Input.GetAxis("Horizontal"); } }
+
+		private bool _canMove;
 		#endregion
 
 		#region Health Properties
@@ -51,49 +53,66 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Player
 		/// </summary>
 		private Animator PlayerAnimator { get { return GetComponentInChildren<Animator>(); } }
 
+		/// <summary>
+		/// Reference to the Child Object that contains the player mesh
+		/// </summary>
 		public GameObject PlayerCharacter;
 		#endregion
 
-		#region Camera
-		public UnityEngine.Camera Camera;
+		#region Combat
+		public float BaseDamage = 15.0f;
 
-		private Plane _cameraPlane;
+		internal bool IsAttacking;
+
+		internal bool HasDealthDamage;
+
+		private bool _canAttack;
 		#endregion
 
 		#region MonoBehaviour
 		// Use this for initialization
 		void Start()
 		{
-			if(Camera != null)
-			{
-				_cameraPlane = new Plane(Vector3.up, Vector3.zero);
-			}
+			_canMove = true;
+			_canAttack = true;
 		}
 
 		// Update is called once per frame
 		void Update()
 		{
-			if (_verticalSpeed != 0)
+			if (_canMove)
 			{
-				PlayerAnimator.SetFloat("MoveSpeed", MovementSpeed);
-				transform.Translate(Vector3.forward * Input.GetAxis("Vertical") * MovementSpeed * Time.deltaTime, Space.World);
+				if (_verticalSpeed != 0)
+				{
+					PlayerAnimator.SetFloat("MoveSpeed", MovementSpeed);
+					transform.Translate(Vector3.forward * Input.GetAxis("Vertical") * MovementSpeed * Time.deltaTime, Space.World);
+				}
+
+				if (_horizontalSpeed != 0)
+				{
+					PlayerAnimator.SetFloat("MoveSpeed", MovementSpeed);
+					transform.Translate(Vector3.right * Input.GetAxis("Horizontal") * MovementSpeed * Time.deltaTime, Space.World);
+				}
+
+				if (_verticalSpeed == 0 && _horizontalSpeed == 0)
+				{
+					PlayerAnimator.SetFloat("MoveSpeed", 0);
+				}
+				else
+				{
+					var lookDirection = new Vector3(_horizontalSpeed, 0.0f, _verticalSpeed);
+					PlayerCharacter.transform.rotation = Quaternion.LookRotation(lookDirection);
+				}
+
+				if(_canAttack && Input.GetAxis("Fire1") != 0)
+				{
+					IsAttacking = true;
+					_canMove = false;
+					_canAttack = false;
+				}
 			}
 
-			if (_horizontalSpeed != 0)
-			{
-				PlayerAnimator.SetFloat("MoveSpeed", MovementSpeed);
-				transform.Translate(Vector3.right * Input.GetAxis("Horizontal") * MovementSpeed * Time.deltaTime, Space.World);
-			}
-
-			if (_verticalSpeed == 0 && _horizontalSpeed == 0)
-			{
-				PlayerAnimator.SetFloat("MoveSpeed", 0);
-			}
-			else
-			{
-				var lookDirection = new Vector3(_horizontalSpeed, 0.0f, _verticalSpeed);
-				PlayerCharacter.transform.rotation = Quaternion.LookRotation(lookDirection);
-			}
+			PlayerAnimator.SetBool("IsAttacking", IsAttacking);
 		}
 		#endregion
 
@@ -106,8 +125,11 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Player
 		{
 			Health -= amount;
 
-			//if (Health <= 0)
-			//    Death();
+			_canAttack = false;
+			_canMove = false;
+			IsAttacking = false;
+
+			PlayerAnimator.SetBool("IsTakingDamage", true);
 		}
 
 		/// <summary>
@@ -115,7 +137,34 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Player
 		/// </summary>
 		public void Death()
 		{
-			Destroy(gameObject);
+			PlayerAnimator.SetBool("IsDying", true);
+		}
+		#endregion
+
+		#region Combat
+		public void FinishAttacking()
+		{
+			PlayerAnimator.SetBool("IsAttacking", false);
+
+			IsAttacking = false;
+			_canAttack = true;
+			_canMove = true;
+			HasDealthDamage = false;
+		}
+
+		public void FinishTakingDamage()
+		{
+			PlayerAnimator.SetBool("IsTakingDamage", false);
+
+			if(Health <= 0)
+			{
+				Death();
+			}
+			else
+			{
+				_canAttack = true;
+				_canMove = true;
+			}
 		}
 		#endregion
 	}

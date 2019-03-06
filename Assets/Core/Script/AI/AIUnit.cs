@@ -96,6 +96,12 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		/// </summary>
 		internal int Index;
 
+		internal bool CanMove;
+
+		internal bool CanAttack;
+
+		internal bool HasDealtDamage;
+
 		/// <summary>
 		/// The animator that is in charge of animation transitions
 		/// </summary>
@@ -106,21 +112,23 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		// Use this for initialization
 		void Start()
 		{
+			CanMove = true;
+			CanAttack = true;
 		}
 
 		// Update is called once per frame
 		void Update()
 		{
-			if(PlayerInSight || PlayerInContact)
+			if((PlayerInSight || PlayerInContact) && !IsDead())
 			{
-				if (BattleState != AIUnitBattleState.Attacking)
+				if (BattleState != AIUnitBattleState.Attacking && CanMove)
 				{
 					// Always look at Player
 					LookAtTargetPlayer();
 
 					MaintainDistance();
 				}
-				else
+				else if (CanMove)
 				{
 					if (InAttackRange && !IsAttacking)
 					{
@@ -129,14 +137,14 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 						// Attack Player
 						AttackTargetPlayer();
 					}
-					else if (!InAttackRange)
+					else if (!InAttackRange && CanAttack)
 					{
 						//Close in on Player
 						MoveTowardsTargetPlayer();
 					}
 				}
 			}
-			else if (UnitGroup.FoundPlayer)
+			else if (UnitGroup.FoundPlayer && !IsDead())
 			{
 				TargetPlayer = UnitGroup.TargetPlayer;
 
@@ -223,7 +231,10 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 
 			// Slows down movement if player is moving to await player actions.
 			if (playerControls != null && playerControls.CurrentMoveSpeed > playerControls.MovementSpeed / 2)
-				move = MovementSpeed / 4;
+				move = 0;
+
+			if (playerControls.IsAttacking)
+				move = 0;
 
 			if (distance <= MinDistanceFromPlayer)
 			{
@@ -266,15 +277,42 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		}
 		#endregion
 
+		#region Health
+		/// <summary>
+		/// Tells the player to take damage
+		/// </summary>
+		/// <param name="amount">The amount of damage to take</param>
+		public void TakeDamage(float amount)
+		{
+			Health -= amount;
+
+			CanAttack = false;
+			CanMove = false;
+			IsAttacking = false;
+
+			UnitAnimator.SetBool("IsTakingDamage", true);
+		}
+
+		/// <summary>
+		/// Kills off the player
+		/// </summary>
+		public void Death()
+		{
+			UnitAnimator.SetBool("IsDying", true);
+		}
+		#endregion
+
 		#region Combat
 		private void AttackTargetPlayer()
 		{
 			if (UnitAnimator != null)
 				UnitAnimator.SetBool("IsAttacking", true);
 			IsAttacking = true;
+			CanAttack = false;
+			CanMove = false;
 
-			var playerControl = TargetPlayer.GetComponent<PlayerControls>();
-			playerControl.TakeDamage(BaseDamage);
+			//var playerControl = TargetPlayer.GetComponent<PlayerControls>();
+			//playerControl.TakeDamage(BaseDamage);
 		}
 
 		public void FinishAttacking()
@@ -283,7 +321,25 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 				UnitAnimator.SetBool("IsAttacking", false);
 
 			IsAttacking = false;
+			CanAttack = true;
+			CanMove = true;
+			HasDealtDamage = false;
 			UnitGroup.DoneAttacking(this);
+		}
+
+		public void FinishTakingDamage()
+		{
+			UnitAnimator.SetBool("IsTakingDamage", false);
+
+			if (Health <= 0)
+			{
+				Death();
+			}
+			else
+			{
+				CanAttack = true;
+				CanMove = true;
+			}
 		}
 		#endregion
 
@@ -314,7 +370,10 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 		/// <param name="unitState">The new state that the unit will be in.</param>
 		public void SetBattleState(AIUnitBattleState unitState)
 		{
-			BattleState = unitState;
+			if(BattleState == AIUnitBattleState.Attacking && CanAttack)
+				BattleState = unitState;
+			else if (BattleState != AIUnitBattleState.Attacking)
+				BattleState = unitState;
 		}
 		#endregion
 	}
