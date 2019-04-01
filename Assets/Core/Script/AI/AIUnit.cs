@@ -1,7 +1,5 @@
 ﻿using GroupEnemyAISimulation.Assets.Scripts.Enum;
 using GroupEnemyAISimulation.Assets.Scripts.Player;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
