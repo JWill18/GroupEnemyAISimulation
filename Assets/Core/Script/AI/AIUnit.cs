@@ -175,6 +175,12 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 				PlayerInContact = false;
 			}
 		}
+
+		// Matches movement to animation
+		private void OnAnimatorMove()
+		{
+			transform.position = UnitAnimator.rootPosition;
+		}
 		#endregion
 
 		#region Detection

@@ -114,6 +114,12 @@ namespace GroupEnemyAISimulation.Assets.Scripts.Player
 
 			PlayerAnimator.SetBool("IsAttacking", IsAttacking);
 		}
+
+		// Matches movement to animation
+		private void OnAnimatorMove()
+		{
+			transform.position = PlayerAnimator.rootPosition;
+		}
 		#endregion
 
 		#region Health

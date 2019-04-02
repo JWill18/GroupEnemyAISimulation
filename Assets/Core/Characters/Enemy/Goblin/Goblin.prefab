@@ -51,7 +51,7 @@ MonoBehaviour:
   MaxHealth: 50
   MovementSpeed: 3
   BaseDamage: 10
-  AttackRange: 1
+  AttackRange: 1.7
   IsAttacking: 0
   TargetPlayer: {fileID: 0}
   SightRadius: 15
