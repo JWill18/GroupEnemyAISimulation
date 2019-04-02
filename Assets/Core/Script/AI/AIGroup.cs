@@ -290,6 +290,16 @@ namespace GroupEnemyAISimulation.Assets.Scripts.AI
 				// Grab the unit.
 				var unit = unitsByIndex[i];
 
+				if (unit.BattleState == AIUnitBattleState.Attacking)
+				{
+					if (unit.UnitAnimator != null)
+					{
+						unit.UnitAnimator.SetInteger("StrafingDirection", 0);
+					}
+
+					continue;
+				}
+
 				// Find the position and rotation relative to the Target player
 				var unitToTargetLocalPosition = TargetPlayer.transform.InverseTransformPoint(unit.transform.position);
 				var unitToTargetLocalRotation = Mathf.Atan2(unitToTargetLocalPosition.x, unitToTargetLocalPosition.z) * Mathf.Rad2Deg;
